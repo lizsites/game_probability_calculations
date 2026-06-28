@@ -1,6 +1,6 @@
 import unittest
 import random
-from calculations.prob_utilities import Distributions,Summations
+from calculations.probability import Distributions,Summations
 
 class Test_Distributions(unittest.TestCase):
     
@@ -17,7 +17,7 @@ class Test_Distributions(unittest.TestCase):
             n=random.randint(1, population_n)
             population_k=random.randint(1, population_n)
 
-        sum_of_chances = Summations.get_hyper_geometric_sum(population_n, population_k, n, k)
+        sum_of_chances = Summations.hyper_geometric_pmf(population_n, population_k, n, k)
 
         self.assertTrue(1.001 > sum_of_chances > 0.999999)
     
@@ -27,27 +27,26 @@ class Test_Distributions(unittest.TestCase):
         population_k = 0
         k = 0
 
-        sum_of_chances = Summations.get_hyper_geometric_sum(population_n, population_k, n, k)
+        sum_of_chances = Summations.hyper_geometric_pmf(population_n, population_k, n, k)
 
         self.assertTrue(1.001 > sum_of_chances > 0.999999)
 
 
         
     def test_binomial(self):
-        sum_of_chances = 0
+        n = random.randint(1,100)
+        x = random.randint(1, n)
         p=random.random()
-        population_n = random.randint(1,100)
-        n = random.randint(1, population_n)
-        k = 0
 
-        print("amount_of_trials: " + str(n))
-        print("target_successful_trials: " + str(k))
-        while k <= n:
-            sum_of_chances = sum_of_chances + Distributions.get_binomial_chances(n, k, p)
-            k = k + 1
-            print("sum_of_chances: " + str(sum_of_chances))
-            print("target_successful_trials: " + str(k))
+        sum_of_chances = Summations.binomial_pmf(n, x, p)
+        self.assertTrue(1.001 > sum_of_chances > 0.999999)
 
+    def test_binomial_zero(self):
+        n = 0
+        x = 0
+        p=0
+
+        sum_of_chances = Summations.binomial_pmf(n, x, p)
         self.assertTrue(1.001 > sum_of_chances > 0.999999)
 
 if __name__ == '__main__':

@@ -1,15 +1,14 @@
 import tkinter as tk
 from tkinter import messagebox
-import gagnon_senseis_method
-from calculations.prob_utilities import Summations
+from calculations.probability import Summations
 import logging
 
 logging.basicConfig(
-    level=logging.DEBUG
+    level=logging.ERROR
 )
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.ERROR)
 # Initialize the main system window
 root = tk.Tk()
 
@@ -43,6 +42,13 @@ n_label.pack(pady=10)
 n_field = tk.Entry(root, width=25, textvariable=default_n)
 n_field.pack(pady=10)
 
+k_label = tk.Label(root, text="How many successes do you want?", font=("Arial", 14))
+k_label.pack(pady=10)
+
+# Create the Entry widget for single-line input
+k_field = tk.Entry(root, width=25, textvariable=default_k)
+k_field.pack(pady=10)
+
 def show_message(items: list):
     for item in items:
         messagebox.showinfo(item["title"], item["message"])
@@ -51,19 +57,18 @@ def show_message(items: list):
 def compare_probabilities():
     population_n = int(population_n_field.get())
     population_k = int(population_k_field.get())
-
     n = int(n_field.get())
+    k = int(k_field.get())
+
     logger.debug(f"Population N: {str(population_n)}")
     logger.debug(f"Population K: {str(population_k)}")
     logger.debug(f"n: {str(n)}")
-    logger.debug(f"k: hard-coded to 2 for this example")
-    push_your_luck_chances = gagnon_senseis_method.push_your_luck_style(population_n, population_k, n, 2)
-    logger.debug(f"chances by push-your-luck logic: {str(push_your_luck_chances)}")
-    hyper_geometric_sum = Summations.get_hyper_geometric_sum(population_n, population_k, n, 2)
+    logger.debug(f"k: {str(k)}")
+    hyper_geometric_sum = Summations.hyper_geometric_pmf(population_n, population_k, n, k)
     logger.debug(f"chances by basic hyper geometric sum: {str(hyper_geometric_sum)}")
     comparison_message = dict(
-        title="Gagnon Sensei's Method",
-        message=f"Gagnon Sensei's Method: {str(push_your_luck_chances)}\nmeasured hyper geometrically: {str(hyper_geometric_sum)}")
+        title="measured hyper geometrically",
+        message=f"measured hyper geometrically: {str(hyper_geometric_sum)}")
     show_message([comparison_message])
 
 
