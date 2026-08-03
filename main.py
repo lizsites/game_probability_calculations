@@ -13,3 +13,8 @@ from calculations.probability import BinomialDistribution, GeometricDistribution
 # print(str(GeometricDistribution.expected_value(0.4)))
 print(str(HyperGeometricDistribution.pmf(28,6,4, 1)))
 # print(str(NegativeHyperGeometricDistribution.expected_value(30,3,15)))
+
+print(str(Summations.hyper_geometric_expected_value(30, 4, 15)))
+
+
+print(str())

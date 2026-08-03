@@ -1,6 +1,6 @@
 import unittest
 import random
-from calculations.probability import Distributions,Summations
+from calculations.probability import Summations
 
 class Test_Distributions(unittest.TestCase):
     
@@ -48,6 +48,7 @@ class Test_Distributions(unittest.TestCase):
 
         sum_of_chances = Summations.binomial_pmf(n, x, p)
         self.assertTrue(1.001 > sum_of_chances > 0.999999)
+
 
 if __name__ == '__main__':
     unittest.main()

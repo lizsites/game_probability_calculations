@@ -87,8 +87,8 @@ class NegativeHyperGeometricDistribution:
     def pmf(population_n: int, population_k: int, x: int, k: int):
         p = 0
         try:
-            if x > k:
-                raise ValueError("Invalid, k > n")
+            if k > x:
+                raise ValueError("Invalid, k > x")
             if population_k > population_n:
                 raise ValueError("Invalid, pop_k > pop_n")
             p = HyperGeometricDistribution.pmf(population_n, population_k, x, k) * (k/x)
@@ -135,3 +135,21 @@ class Summations:
             k = k + 1
         return sum_of_chances
 
+    @staticmethod
+    def get_complex_expected_value(population_n: int, k_set: list, n: int):
+        expected_value = 0
+        simple_average = Summations.get_simple_average(k_set)
+        population_k = len(k_set)
+
+        for k in range(population_k + 1):
+            expected_value = expected_value + HyperGeometricDistribution.pmf(population_n, population_k, n, k) * k * simple_average
+
+        return expected_value
+
+    @staticmethod
+    def get_simple_average(items: list):
+        added_total = 0
+        number_of_items = len(items)
+        for item in items:
+            added_total = added_total + item
+        return added_total / number_of_items
