@@ -60,15 +60,3 @@ print("-------------------------------------------------------------------------
 print("expected value of new furniture distribution: " + str(Summations.hyper_geometric_expected_value(27,3,13)))
 print("variance of new furniture distribution: " + str(Summations.hyper_geometric_variance(27,3,13)))
 print("coefficient of variation of new furniture distribution: " + str(Summations.hyper_geometric_coefficient_of_variation(27,3,13)))
-
-
-
-
-print("-----------------------------------------------------------------------------------------------------")
-print("compare by adding 1 more furniture customer")
-print("-----------------------------------------------------------------------------------------------------")
-print("chances of 0: " + str(BinomialDistribution.pmf(4,0,0.5)))
-print("chances of 1: " + str(BinomialDistribution.pmf(4,1,0.5)))
-print("chances of 2: " + str(BinomialDistribution.pmf(4,2,0.5)))
-print("chances of 3: " + str(BinomialDistribution.pmf(4,3,0.5)))
-print("chances of 4: " + str(BinomialDistribution.pmf(4,4,0.5)))
