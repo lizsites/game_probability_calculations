@@ -126,6 +126,23 @@ class Summations:
             k = k + 1
         return weighted_value
 
+
+    @staticmethod
+    def hyper_geometric_variance(population_n: int, population_k: int, n: int):
+        weighted_value = 0
+        k = 0
+        expected_value = Summations.hyper_geometric_expected_value(population_n, population_k, n)
+        while k <= population_k  and k <= n:
+            weighted_value = weighted_value + HyperGeometricDistribution.pmf(population_n, population_k, n, k)*(k - expected_value)**2
+            k = k + 1
+        return weighted_value
+
+    @staticmethod
+    def hyper_geometric_coefficient_of_variation(population_n: int, population_k: int, n: int):
+        expected_value = Summations.hyper_geometric_expected_value(population_n, population_k, n)
+        variance = math.sqrt(Summations.hyper_geometric_variance(population_n, population_k, n))
+        return variance / expected_value
+
     @staticmethod
     def binomial_pmf(n: int, x: int, p: float):
         sum_of_chances = 0
