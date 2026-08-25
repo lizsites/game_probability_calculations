@@ -91,15 +91,11 @@ print("-------------------------------------------------------------------------
 print("Getting power set")
 print("-----------------------------------------------------------------------------------------------------")
 power_set = Summations.get_power_set([12,18,25])
-
-
-
 print(power_set)
 
 print("-----------------------------------------------------------------------------------------------------")
 print("Testing total variance")
 print("-----------------------------------------------------------------------------------------------------")
 total_variance = Summations.get_total_variance(27,[12,18,25],13)
-
-print(total_variance)
+print("Variance through program: " + str(total_variance))
 print("Standard deviation through program: " + str(math.sqrt(total_variance)))
