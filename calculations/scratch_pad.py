@@ -90,24 +90,16 @@ print("Coefficient of variation by hand: " + str(math.sqrt(variance_by_hand)/fur
 print("-----------------------------------------------------------------------------------------------------")
 print("Getting power set")
 print("-----------------------------------------------------------------------------------------------------")
-power_set = Summations.get_power_set([10,12,14,16])
+power_set = Summations.get_power_set([12,18,25])
+
+
 
 print(power_set)
 
-# furniture_var_v2 = Summations.get_total_variance(10, [10, 14], 7)
-# art_var_v2 = Summations.get_total_variance(10, [5, 10], 7)
-# electronics_var_v2 = Summations.get_total_variance(10, [6, 9], 7)
-# clothes_var_v2 = Summations.get_total_variance(10, [3, 8], 7)
-# kitchen_var_v2 = Summations.get_total_variance(10, [4, 7], 7)
+print("-----------------------------------------------------------------------------------------------------")
+print("Testing total variance")
+print("-----------------------------------------------------------------------------------------------------")
+total_variance = Summations.get_total_variance(27,[12,18,25],13)
 
-
-
-# print("Variance of Monetary Offers for Furniture Customers (v2): " + str(furniture_var_v2))
-# print("Variance of Monetary Offers for Art Customers (v2): " + str(
-#     art_var_v2))
-# print("Variance of Monetary Offers for Electronics Customers (v2): " + str(
-#     electronics_var_v2))
-# print("Variance of Monetary Offers for Clothes Customers (v2): " + str(
-#     clothes_var_v2))
-# print("Variance of Monetary Offers for Kitchen Customers (v2): " + str(
-#     kitchen_var_v2))
+print(total_variance)
+print("Standard deviation through program: " + str(math.sqrt(total_variance)))

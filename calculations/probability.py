@@ -173,32 +173,43 @@ class Summations:
         return added_total / number_of_items
 
     @staticmethod
-    def get_total_variance(population_n: int, k_set: list, n: int):
+    def get_total_variance(population_n: int, k_list: list, n: int):
         variance = 0
-        population_k = len(k_set)
-        expected_value = Summations.get_total_expectation(population_n, k_set, n)
-        # 10, 12, 14, 16
-        # {10, 12, 14, 16}
-        # {10, 12, 14}, {10, 14, 16}, {12, 14, 16}
-        # {10, 12}, {10, 14}, {10, 16},
-
-        for v in k_set:
-            variance = variance + HyperGeometricDistribution.pmf(population_n, population_k, n, 1) * (v - expected_value)**2
-
+        population_k = len(k_list)
+        expected_value = Summations.get_total_expectation(population_n, k_list, n)
+        power_set = Summations.get_power_set(k_list)
+        for k, subsets in power_set.items():
+            for subset in subsets:
+                v_sum = sum(subset)
+                variance = variance + HyperGeometricDistribution.pmf(population_n, population_k, n, k) * (1/len(subsets)) * (v_sum - expected_value)**2
         return variance
 
     @staticmethod
     def get_power_set(k_set: list):
-        power_set = Summations.get_power_set_inner({}, tuple(k_set))
-        power_set_cleaned = {key: [list(tup) for tup in value] for key, value in power_set.items()}
-        return power_set_cleaned
+        k_labelled = tuple("element " + str(k_index) + " -" + str(item) for k_index, item in enumerate(k_set))
+        power_set = Summations.get_raw_power_set({}, k_labelled)
+        return Summations.clean_raw_power_set(power_set)
 
     @staticmethod
-    def get_power_set_inner(power_set: dict, k_set: tuple):
+    def get_raw_power_set(power_set: dict, k_set: tuple):
         if len(k_set) not in power_set:
             power_set[len(k_set)] = set()
         power_set[len(k_set)].add(k_set)
-        for k in k_set:
-            filtered_tuple = tuple(item for item in k_set if item != k)
-            Summations.get_power_set_inner(power_set, filtered_tuple)
+        for k_index, k in enumerate(k_set):
+            filtered_tuple = tuple(k_set[:k_index] + k_set[k_index + 1:])
+            power_set = Summations.get_raw_power_set(power_set, filtered_tuple)
         return power_set
+
+    @staticmethod
+    def clean_raw_power_set(power_set: dict):
+        power_set_cleaned = {}
+        for (element_count, unique_elements) in power_set.items():
+            cleaned_combinations = []
+            for element_combination in unique_elements:
+                cleaned_list = list()
+                for element in element_combination:
+                    cleaned_element = element.split("-")
+                    cleaned_list.append(int(cleaned_element[1]))
+                cleaned_combinations.append(list(cleaned_list))
+            power_set_cleaned[element_count] = cleaned_combinations
+        return power_set_cleaned
