@@ -152,10 +152,11 @@ class Summations:
             k = k + 1
         return sum_of_chances
 
+    # This uses the law of total expectations to calculate the summation of V given drawing X amount of tiles
     @staticmethod
-    def get_complex_expected_value(population_n: int, k_set: list, n: int):
+    def get_total_expectation(population_n: int, k_set: list, n: int):
         expected_value = 0
-        simple_average = Summations.get_simple_average(k_set)
+        simple_average = Summations.get_arithmetic_mean(k_set)
         population_k = len(k_set)
 
         for k in range(population_k + 1):
@@ -164,9 +165,40 @@ class Summations:
         return expected_value
 
     @staticmethod
-    def get_simple_average(items: list):
+    def get_arithmetic_mean(items: list):
         added_total = 0
         number_of_items = len(items)
         for item in items:
             added_total = added_total + item
         return added_total / number_of_items
+
+    @staticmethod
+    def get_total_variance(population_n: int, k_set: list, n: int):
+        variance = 0
+        population_k = len(k_set)
+        expected_value = Summations.get_total_expectation(population_n, k_set, n)
+        # 10, 12, 14, 16
+        # {10, 12, 14, 16}
+        # {10, 12, 14}, {10, 14, 16}, {12, 14, 16}
+        # {10, 12}, {10, 14}, {10, 16},
+
+        for v in k_set:
+            variance = variance + HyperGeometricDistribution.pmf(population_n, population_k, n, 1) * (v - expected_value)**2
+
+        return variance
+
+    @staticmethod
+    def get_power_set(k_set: list):
+        power_set = Summations.get_power_set_inner({}, tuple(k_set))
+        power_set_cleaned = {key: [list(tup) for tup in value] for key, value in power_set.items()}
+        return power_set_cleaned
+
+    @staticmethod
+    def get_power_set_inner(power_set: dict, k_set: tuple):
+        if len(k_set) not in power_set:
+            power_set[len(k_set)] = set()
+        power_set[len(k_set)].add(k_set)
+        for k in k_set:
+            filtered_tuple = tuple(item for item in k_set if item != k)
+            Summations.get_power_set_inner(power_set, filtered_tuple)
+        return power_set
