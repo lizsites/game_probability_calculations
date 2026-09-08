@@ -97,14 +97,16 @@ class NegativeHyperGeometricDistribution:
         return p
 
     @staticmethod
-    def expected_value(population_n: int, population_k: int, x: int):
-        return x * population_k / (population_n - population_k + 1)
+    def expected_value(population_n: int, population_k: int, k: int):
+        return ((population_n + 1) / (population_k + 1)) * k
 
     @staticmethod
-    def variance(population_n: int, population_k: int, x: int):
-        numerator = (population_k * (population_n + 1) * (population_n - population_k - x + 1))
-        denominator = ((population_n - population_k + 1) ** 2 * (population_n - population_k + 2))
-        return x * numerator / denominator
+    def variance(population_n: int, population_k: int, k: int):
+        numerator = population_k * (population_n + 1) * (population_n - population_k) * (population_k + 1 - k)
+        denominator = ((population_k + 1) ** 2 * ( population_k + 2))
+        # numerator = (population_k * (population_n + 1) * (population_n - population_k - x + 1))
+        # denominator = ((population_n - population_k + 1) ** 2 * (population_n - population_k + 2))
+        return numerator / denominator
 
 
 
@@ -124,6 +126,17 @@ class Summations:
         while k <= population_k  and k <= n:
             weighted_value = weighted_value + HyperGeometricDistribution.pmf(population_n, population_k, n, k) * k
             k = k + 1
+        return weighted_value
+
+
+
+    @staticmethod
+    def negative_hyper_geometric_summed_pmf(population_n: int, population_k: int, x: int, k: int):
+        weighted_value = 0
+        n=k
+        while n <= x:
+            weighted_value = weighted_value + NegativeHyperGeometricDistribution.pmf(population_n, population_k, n, k)
+            n = n + 1
         return weighted_value
 
 
@@ -177,39 +190,58 @@ class Summations:
         variance = 0
         population_k = len(k_list)
         expected_value = Summations.get_total_expectation(population_n, k_list, n)
-        power_set = Summations.get_power_set(k_list)
-        for k, subsets in power_set.items():
+        power_collection = Summations.get_power_collection(k_list)
+        for k, subsets in power_collection.items():
+            # 0, 1, 2, 3 (targeted number of successes)
             for subset in subsets:
                 v_sum = sum(subset)
+                # population_n: 27
+                # population_n: 3
+                # n: 13
+                # k: provided by for loop (0, 1,2,3)
                 variance = variance + HyperGeometricDistribution.pmf(population_n, population_k, n, k) * (1/len(subsets)) * (v_sum - expected_value)**2
         return variance
 
     @staticmethod
-    def get_power_set(k_set: list):
+    def get_power_collection(k_set: list):
+        # it makes a tuple of elements like this format
+        # element 1 - 10
+        # element 2 - 12
+        # element 3 - 14
+
+        # 10, 10, 18, 12
         k_labelled = tuple("element " + str(k_index) + " -" + str(item) for k_index, item in enumerate(k_set))
-        power_set = Summations.get_raw_power_set({}, k_labelled)
-        return Summations.clean_raw_power_set(power_set)
+        power_collection = Summations.get_raw_power_collection({}, k_labelled)
+        return Summations.clean_raw_power_collection(power_collection)
 
     @staticmethod
-    def get_raw_power_set(power_set: dict, k_set: tuple):
-        if len(k_set) not in power_set:
-            power_set[len(k_set)] = set()
-        power_set[len(k_set)].add(k_set)
+    def get_raw_power_collection(power_collection: dict, k_set: tuple):
+
+        # assume you have a collection consisting of {1,2,3}
+        #{
+        #   0 : [()],
+        #   1 : [(1), (2), (3)],
+        #   2 : [(1,2), (2,3), (1,3)],
+        #   3 : [(1,2,3)]
+        # }
+        if len(k_set) not in power_collection:
+            power_collection[len(k_set)] = set()
+        power_collection[len(k_set)].add(k_set)
         for k_index, k in enumerate(k_set):
             filtered_tuple = tuple(k_set[:k_index] + k_set[k_index + 1:])
-            power_set = Summations.get_raw_power_set(power_set, filtered_tuple)
-        return power_set
+            power_collection = Summations.get_raw_power_collection(power_collection, filtered_tuple)
+        return power_collection
 
     @staticmethod
-    def clean_raw_power_set(power_set: dict):
-        power_set_cleaned = {}
-        for (element_count, unique_elements) in power_set.items():
+    def clean_raw_power_collection(power_collection: dict):
+        power_collection_cleaned = {}
+        for (element_count, unique_elements) in power_collection.items():
             cleaned_combinations = []
             for element_combination in unique_elements:
                 cleaned_list = list()
                 for element in element_combination:
                     cleaned_element = element.split("-")
-                    cleaned_list.append(int(cleaned_element[1]))
+                    cleaned_list.append(float(cleaned_element[1]))
                 cleaned_combinations.append(list(cleaned_list))
-            power_set_cleaned[element_count] = cleaned_combinations
-        return power_set_cleaned
+            power_collection_cleaned[element_count] = cleaned_combinations
+        return power_collection_cleaned
