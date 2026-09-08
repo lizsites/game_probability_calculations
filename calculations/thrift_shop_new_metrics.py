@@ -8,7 +8,7 @@ print("-------------------------------------------------------------------------
 
 print("-----------------------------------------------------------------------------------------------------")
 print("What’s the average amount of Customer Tokens pulled before End of Round?")
-print("(10 basic customers per player, 3 EoR tokens per player)")
+print("(10 basic customers per player, 4 EoR tokens per player)")
 # print("The round ends whenever ALL EoR tokens have been pulled from ALL player's bags")
 # print("Therefore, the question is: on average, how many tokens will an individual player get to pull before all 3/6/9/12 EoR tokens are pulled?")
 print("-----------------------------------------------------------------------------------------------------")
@@ -28,30 +28,31 @@ print("Now what should the tokens per customer category be?")
 print("-----------------------------------------------------------------------------------------------------")
 print("Setting variables")
 print("-----------------------------------------------------------------------------------------------------")
-kitchen_k_set = [2, 2] # 1, 2
-clothes_k_set = [2, 3] # 1.5, 1.5
-electronics_k_set = [3, 4] # 1, 2
-art_k_set = [2, 5] # 0, 3
-furniture_k_set = [3,6] # 0, 3
+#List of monetary offers
+kitchen_k_set = [2, 2] # 4 - 1 * 2 = 2
+clothes_k_set = [2, 3] # 5 - 1.5 * 2 = 2
+art_k_set = [2, 5] # 7 - 1.5 * 2 = 3
+electronics_k_set = [3, 4] # 7 - 2 * 2 = 3
+furniture_k_set = [4,5] # 9 - 3 * 2 = 3
 end_of_round_tokens = [0,0,0]
 total_set = kitchen_k_set + clothes_k_set + electronics_k_set + art_k_set + furniture_k_set + end_of_round_tokens
 
 customer_bag = {
     "kitchen": {
         "k_set": kitchen_k_set,
-        "avg_cost": 1
+        "avg_cost": 1 # price to purchase before selling phase
     },
     "clothes": {
         "k_set": clothes_k_set,
-        "avg_cost": 1.5
-    },
+        "avg_cost": 1.3
+    },  
     "electronics": {
         "k_set": electronics_k_set,
         "avg_cost": 2
     },
     "art": {
         "k_set": art_k_set,
-        "avg_cost": 1.5
+        "avg_cost": 1.7
     },
     "furniture": {
         "k_set": furniture_k_set,
@@ -80,8 +81,15 @@ for category_type, category in customer_bag.items():
     if category_type not in ["end_of_round", "total_set"]:
         # setting commonly used variables
         population_n = len(customer_bag["total_set"]["k_set"]) - 4
+        # not 13, it's 9 because we're ignoring the 4 EoR tokens
+
         non_end_of_round_tokens_pulled = math.floor(avg_pulls_1p - 3)
+        # not 9, it's 6 tokens because this is how many customers you are expected to pull with no bag manipulation
+
         k_collection = category["k_set"]
+
+        # exa. a monetary offer of [10, 11] is very good
+        # However, if the avg cost of that category of item is 10 then it's basically [0,1]
         k_as_proft = list (customer - category["avg_cost"] for customer in category["k_set"] if category["k_set"] == k_collection)
 
         # revenue calculations
@@ -129,8 +137,6 @@ class MainWindow(QMainWindow):
         canvas.axes.set_xlabel("Expected profit")
         canvas.axes.set_ylabel("Standard Deviation")
 
-        # x_plot = list(category_plots["x"] for category_plots in game_plots["plots"])
-        # y_plot = list(category_plots["y"] for category_plots in game_plots["plots"])
         canvas.axes.plot(game_plots["ideal_x"], game_plots["ideal_y"], color="blue", linewidth=2)
         for game_plot in game_plots["plots"]:
             canvas.axes.annotate(game_plot["label"], (game_plot["x"], game_plot["y"]), xytext=(10,10), textcoords='offset points')
