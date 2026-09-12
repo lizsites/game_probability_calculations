@@ -13,10 +13,10 @@ print("(10 basic customers per player, 4 EoR tokens per player)")
 # print("Therefore, the question is: on average, how many tokens will an individual player get to pull before all 3/6/9/12 EoR tokens are pulled?")
 print("-----------------------------------------------------------------------------------------------------")
 
-avg_pulls_1p = NegativeHyperGeometricDistribution.expected_value(14,4,3)
+avg_pulls_1p = NegativeHyperGeometricDistribution.expected_value(13,3,3)
 print("Avg tokens pulled for 1 player: " + str(avg_pulls_1p))
 
-variance_1p = NegativeHyperGeometricDistribution.variance(14,4,3)
+variance_1p = NegativeHyperGeometricDistribution.variance(13,3,3)
 
 standard_deviation_1p = math.sqrt(variance_1p)
 coefficient_of_variation_1p = standard_deviation_1p / avg_pulls_1p
@@ -29,34 +29,45 @@ print("-------------------------------------------------------------------------
 print("Setting variables")
 print("-----------------------------------------------------------------------------------------------------")
 #List of monetary offers
+
 kitchen_k_set = [2, 2] # 4 - 1 * 2 = 2
+kitchen_items = [0,1,2,0,1,2,1,1,1,2,1]
+
 clothes_k_set = [2, 3] # 5 - 1.5 * 2 = 2
-art_k_set = [2, 5] # 7 - 1.5 * 2 = 3
+clothes_items = [1,1,2,1,1,2,1,1,1,2,1]
+
+art_k_set = [2, 4] # 7 - 1.5 * 2 = 3
+art_items = [2,2,2,2,1,2,1]
+
 electronics_k_set = [3, 4] # 7 - 2 * 2 = 3
+electronics_items = [2,2,2,2,2,2,2]
+
 furniture_k_set = [4,5] # 9 - 3 * 2 = 3
+furniture_items = [3,2,3,2,3]
+
 end_of_round_tokens = [0,0,0]
 total_set = kitchen_k_set + clothes_k_set + electronics_k_set + art_k_set + furniture_k_set + end_of_round_tokens
 
 customer_bag = {
     "kitchen": {
         "k_set": kitchen_k_set,
-        "avg_cost": 1 # price to purchase before selling phase
+        "avg_cost": Summations.get_arithmetic_mean(kitchen_items) # price to purchase before selling phase
     },
     "clothes": {
         "k_set": clothes_k_set,
-        "avg_cost": 1.3
+        "avg_cost": Summations.get_arithmetic_mean(clothes_items)
     },  
     "electronics": {
         "k_set": electronics_k_set,
-        "avg_cost": 2
+        "avg_cost": Summations.get_arithmetic_mean(electronics_items)
     },
     "art": {
         "k_set": art_k_set,
-        "avg_cost": 1.7
+        "avg_cost": Summations.get_arithmetic_mean(art_items)
     },
     "furniture": {
         "k_set": furniture_k_set,
-        "avg_cost": 2.5
+        "avg_cost": Summations.get_arithmetic_mean(furniture_items)
     },
     "end_of_round": {
         "k_set": end_of_round_tokens,
@@ -80,7 +91,7 @@ print("-------------------------------------------------------------------------
 for category_type, category in customer_bag.items():
     if category_type not in ["end_of_round", "total_set"]:
         # setting commonly used variables
-        population_n = len(customer_bag["total_set"]["k_set"]) - 4
+        population_n = len(customer_bag["total_set"]["k_set"]) - 3
         # not 13, it's 9 because we're ignoring the 4 EoR tokens
 
         non_end_of_round_tokens_pulled = math.floor(avg_pulls_1p - 3)
